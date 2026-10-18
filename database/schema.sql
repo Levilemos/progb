@@ -9,19 +9,14 @@ CREATE TABLE usuario (
     biografia       TEXT
 );
 
--- ---------------------------------------------------------------------
--- 2. JOGADOR (subclasse de usuario)
---    A chave primaria TAMBEM e chave estrangeira: herda o id do usuario.
--- ---------------------------------------------------------------------
+
 CREATE TABLE jogador (
     id_usuario  INT  PRIMARY KEY
                      REFERENCES usuario (id_usuario) ON DELETE CASCADE,
     nivel       INT  NOT NULL DEFAULT 1 CHECK (nivel >= 1)
 );
 
--- ---------------------------------------------------------------------
--- 3. ADMINISTRADOR (subclasse de usuario)
--- ---------------------------------------------------------------------
+
 CREATE TABLE administrador (
     id_usuario      INT           PRIMARY KEY
                                   REFERENCES usuario (id_usuario) ON DELETE CASCADE,
@@ -30,20 +25,14 @@ CREATE TABLE administrador (
     permissoes      VARCHAR(255)
 );
 
--- ---------------------------------------------------------------------
--- 4. GENERO
--- ---------------------------------------------------------------------
+
 CREATE TABLE genero (
     id_genero   SERIAL        PRIMARY KEY,
     nome        VARCHAR(50)   NOT NULL UNIQUE,
     descricao   TEXT
 );
 
--- ---------------------------------------------------------------------
--- 5. JOGO
---    Administrador 1 ---- 0..* Jogo  =>  FK id_administrador em jogo.
---    capa guarda o CAMINHO da imagem (dado nao estruturado).
--- ---------------------------------------------------------------------
+
 CREATE TABLE jogo (
     id_jogo           SERIAL        PRIMARY KEY,
     titulo            VARCHAR(150)  NOT NULL,
@@ -56,20 +45,14 @@ CREATE TABLE jogo (
                                     ON DELETE RESTRICT
 );
 
--- ---------------------------------------------------------------------
--- 6. JOGO_GENERO (tabela do muitos-para-muitos entre jogo e genero)
---    Chave primaria composta: o mesmo par nao se repete.
--- ---------------------------------------------------------------------
+
 CREATE TABLE jogo_genero (
     id_jogo     INT  NOT NULL REFERENCES jogo   (id_jogo)   ON DELETE CASCADE,
     id_genero   INT  NOT NULL REFERENCES genero (id_genero) ON DELETE CASCADE,
     PRIMARY KEY (id_jogo, id_genero)
 );
 
--- ---------------------------------------------------------------------
--- 7. BIBLIOTECA
---    Jogador 1 ---- 1 Biblioteca  =>  FK UNIQUE (um jogador, uma biblioteca).
--- ---------------------------------------------------------------------
+
 CREATE TABLE biblioteca (
     id_biblioteca  SERIAL       PRIMARY KEY,
     id_jogador     INT          NOT NULL UNIQUE
@@ -80,11 +63,7 @@ CREATE TABLE biblioteca (
     data_criacao   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- ---------------------------------------------------------------------
--- 8. ITEM_BIBLIOTECA
---    Composicao: se a biblioteca for apagada, os itens somem (CASCADE).
---    UNIQUE impede o mesmo jogo duas vezes na mesma biblioteca.
--- ---------------------------------------------------------------------
+
 CREATE TABLE item_biblioteca (
     id_item        SERIAL       PRIMARY KEY,
     id_biblioteca  INT          NOT NULL
@@ -97,10 +76,7 @@ CREATE TABLE item_biblioteca (
     UNIQUE (id_biblioteca, id_jogo)
 );
 
--- ---------------------------------------------------------------------
--- 9. AVALIACAO
---    UNIQUE impede o mesmo usuario de avaliar o mesmo jogo duas vezes.
--- ---------------------------------------------------------------------
+
 CREATE TABLE avaliacao (
     id_avaliacao   SERIAL     PRIMARY KEY,
     id_usuario     INT        NOT NULL
