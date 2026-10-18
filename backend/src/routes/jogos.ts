@@ -1,8 +1,97 @@
-
 import { Router } from 'express';
 import { pool } from '../database.js';
+import multer from 'multer';
+import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 const router = Router();
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: path.resolve(process.cwd(), 'uploads'),
+    filename: (_req, file, callback) => {
+      const extensao = path.extname(file.originalname).toLowerCase();
+      callback(null, `${randomUUID()}${extensao}`);
+    },
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, callback) => {
+    const tiposPermitidos = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+    ];
+
+    if (!tiposPermitidos.includes(file.mimetype)) {
+      return callback(
+        new Error('Envie uma imagem JPG, PNG, WEBP ou GIF.')
+      );
+    }
+
+    callback(null, true);
+  },
+});
+
+router.post('/:id/capa', (req, res, next) => {
+  upload.single('capa')(req, res, (error) => {
+    if (error) {
+      const mensagem =
+        error instanceof multer.MulterError &&
+        error.code === 'LIMIT_FILE_SIZE'
+          ? 'A imagem deve ter no máximo 5 MB.'
+          : error.message;
+
+      return res.status(400).json({ mensagem });
+    }
+
+    next();
+  });
+}, async (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({
+      mensagem: 'ID do jogo inválido.',
+    });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({
+      mensagem: 'Envie uma imagem no campo "capa".',
+    });
+  }
+
+  try {
+    const caminhoCapa = `/uploads/${req.file.filename}`;
+
+    const resultado = await pool.query(
+      `UPDATE jogo
+       SET capa = $1
+       WHERE id_jogo = $2
+       RETURNING id_jogo, titulo, capa`,
+      [caminhoCapa, id]
+    );
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({
+        mensagem: 'Jogo não encontrado.',
+      });
+    }
+
+    return res.json({
+      mensagem: 'Capa enviada com sucesso.',
+      jogo: resultado.rows[0],
+    });
+  } catch (error) {
+    console.error('Erro ao salvar a capa:', error);
+
+    return res.status(500).json({
+      mensagem: 'Não foi possível salvar a capa no banco de dados.',
+    });
+  }
+});
 
 // Listar todos os jogos
 router.get('/', async (_req, res) => {
@@ -31,6 +120,57 @@ router.get('/', async (_req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensagem: 'Erro ao listar jogos.' });
+  }
+});
+
+router.get('/:id/estatisticas', async (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({
+      mensagem: 'ID do jogo inválido.',
+    });
+  }
+
+  try {
+    const jogo = await pool.query(
+      'SELECT id_jogo FROM jogo WHERE id_jogo = $1',
+      [id]
+    );
+
+    if (jogo.rows.length === 0) {
+      return res.status(404).json({
+        mensagem: 'Jogo não encontrado.',
+      });
+    }
+
+    const resultado = await pool.query(
+      `SELECT nota
+       FROM avaliacao
+       WHERE id_jogo = $1`,
+      [id]
+    );
+
+    const notas = resultado.rows.map(
+      (avaliacao: { nota: number }) => Number(avaliacao.nota)
+    );
+
+    const quantidade = notas.length;
+    const media = quantidade > 0
+      ? notas.reduce((soma, nota) => soma + nota, 0) / quantidade
+      : null;
+
+    return res.json({
+      id_jogo: id,
+      quantidade_avaliacoes: quantidade,
+      media_notas: media === null ? null : Number(media.toFixed(2)),
+    });
+  } catch (error) {
+    console.error('Erro ao calcular estatísticas do jogo:', error);
+
+    return res.status(500).json({
+      mensagem: 'Não foi possível calcular as estatísticas do jogo.',
+    });
   }
 });
 

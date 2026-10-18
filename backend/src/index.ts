@@ -7,8 +7,14 @@ import generosRouter from './routes/generos.js';
 import avaliacoesRouter from './routes/avaliacoes.js';
 import bibliotecasRouter from './routes/bibliotecas.js';
 import usuariosRouter from './routes/usuarios.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 app.use(express.json());
 app.use('/generos', generosRouter);
@@ -19,7 +25,7 @@ app.use('/usuarios', usuariosRouter);
 
 
 app.get('/', (_req, res) => {
-  res.json({ mensagem: 'API funcionando!' });
+  res.json({ mensagem: 'API da BraryGame funcionanduu!' });
 });
 
 app.get('/db-test', async (_req, res) => {
