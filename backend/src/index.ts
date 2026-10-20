@@ -8,17 +8,38 @@ import avaliacoesRouter from './routes/avaliacoes.js';
 import bibliotecasRouter from './routes/bibliotecas.js';
 import usuariosRouter from './routes/usuarios.js';
 import path from 'node:path';
+import authRouter from './routes/auth.js';
+import swaggerUi from 'swagger-ui-express';
+import { readFileSync } from 'node:fs';
+
 const app = express();
+const swaggerDocument = JSON.parse(
+  readFileSync(
+    new URL('../swagger.json', import.meta.url),
+    'utf-8'
+  )
+);
+
 
 
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
-
 app.use(express.json());
+app.use('/auth', authRouter);
 app.use('/generos', generosRouter);
 app.use('/jogos', jogosRouter);
 app.use('/avaliacoes', avaliacoesRouter);
 app.use('/bibliotecas', bibliotecasRouter);
 app.use('/usuarios', usuariosRouter);
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+  swaggerOptions: {
+    docExpansion: 'none',
+    defaultModelsExpandDepth: -1
+  }
+})
+);
 
 
 app.get('/', (_req, res) => {
@@ -44,9 +65,12 @@ app.get('/db-test', async (_req, res) => {
 
 const port = Number(process.env.PORT ?? 3000);
 
+
 app.listen(port, () => {
   console.log(`API disponível em http://localhost:${port}`);
 });
+
+
 
 
 

@@ -49,7 +49,9 @@ export class UsuarioController {
       const mensagem = error instanceof Error ? error.message : '';
       const codigo = (error as { code?: string }).code;
 
-      if (mensagem === 'Nome, e-mail e senha_hash são obrigatórios.') {
+      if (mensagem === 'Nome e e-mail são obrigatórios.' ||
+            mensagem === 'Senha é obrigatória.' ||
+            mensagem === 'Senha inválida.') {
         return res.status(400).json({ mensagem });
       }
 
@@ -82,7 +84,9 @@ export class UsuarioController {
 
       if (
         mensagem === 'ID inválido.' ||
-        mensagem === 'Nome, e-mail e senha_hash são obrigatórios.'
+        mensagem === 'Senha é obrigatória.' ||
+        mensagem === 'Senha inválida.'
+        
       ) {
         return res.status(400).json({ mensagem });
       }

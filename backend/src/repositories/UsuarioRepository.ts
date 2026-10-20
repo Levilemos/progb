@@ -46,31 +46,36 @@ export class UsuarioRepository {
     return resultado.rows[0];
   }
 
-  async atualizar(id: number, dados: {
-    nome: string;
-    email: string;
-    senha_hash: string;
-    foto_perfil?: string | null;
-    biografia?: string | null;
-  }) {
-    const resultado = await pool.query(`
-      UPDATE usuario
-      SET nome = $1, email = $2, senha_hash = $3,
-          foto_perfil = $4, biografia = $5
-      WHERE id_usuario = $6
-      RETURNING id_usuario, nome, email, data_cadastro,
-                foto_perfil, biografia;
-    `, [
-      dados.nome.trim(),
-      dados.email.trim(),
-      dados.senha_hash,
-      dados.foto_perfil ?? null,
-      dados.biografia ?? null,
-      id
-    ]);
+  
+async atualizar(id: number, dados: {
+  nome: string;
+  email: string;
+  senha_hash?: string;
+  foto_perfil?: string | null;
+  biografia?: string | null;
+}) {
+  const resultado = await pool.query(`
+    UPDATE usuario
+    SET nome = $1,
+        email = $2,
+        senha_hash = COALESCE($3, senha_hash),
+        foto_perfil = $4,
+        biografia = $5
+    WHERE id_usuario = $6
+    RETURNING id_usuario, nome, email, data_cadastro,
+              foto_perfil, biografia;
+  `, [
+    dados.nome.trim(),
+    dados.email.trim(),
+    dados.senha_hash ?? null,
+    dados.foto_perfil ?? null,
+    dados.biografia ?? null,
+    id
+  ]);
 
-    return resultado.rows[0] ?? null;
-  }
+  return resultado.rows[0] ?? null;
+}
+
 
   async excluir(id: number): Promise<boolean> {
     const resultado = await pool.query(
@@ -80,4 +85,16 @@ export class UsuarioRepository {
 
     return (resultado.rowCount ?? 0) > 0;
   }
+
+  
+async buscarPorEmail(email: string) {
+  const resultado = await pool.query(`
+    SELECT id_usuario, nome, email, senha_hash
+    FROM usuario
+    WHERE email = $1;
+  `, [email]);
+
+  return resultado.rows[0] ?? null;
+}
+
 }

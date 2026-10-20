@@ -1,0 +1,1188 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BraryGame - API",
+    "version": "1.0.0",
+    "description": "Rotas do projeto BraryGame. Use POST /auth/login para gerar um token; GET /auth/me exige autenticação."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação"
+    },
+    {
+      "name": "Usuários"
+    },
+    {
+      "name": "Jogos"
+    },
+    {
+      "name": "Gêneros"
+    },
+    {
+      "name": "Avaliações"
+    },
+    {
+      "name": "Bibliotecas"
+    },
+    {
+      "name": "Sistema"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Autenticar usuário e gerar token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredenciaisLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaLogin"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Consultar identidade do token JWT",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentidadeAutenticada"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        }
+      }
+    },
+    "/usuarios": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Listar usuarios",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Criar usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      }
+    },
+    "/usuarios/{id}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Buscar usuario por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Atualizar usuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioAtualizacao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Excluir usuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/jogos": {
+      "get": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Listar jogos",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Criar jogo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JogoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          }
+        }
+      }
+    },
+    "/jogos/{id}": {
+      "get": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Buscar jogo por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Atualizar jogo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JogoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Excluir jogo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      }
+    },
+    "/generos": {
+      "get": {
+        "tags": [
+          "Gêneros"
+        ],
+        "summary": "Listar generos",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Gêneros"
+        ],
+        "summary": "Criar genero",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneroEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      }
+    },
+    "/generos/{id}": {
+      "get": {
+        "tags": [
+          "Gêneros"
+        ],
+        "summary": "Buscar genero por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Gêneros"
+        ],
+        "summary": "Atualizar genero",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneroEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Gêneros"
+        ],
+        "summary": "Excluir genero",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/avaliacoes": {
+      "get": {
+        "tags": [
+          "Avaliações"
+        ],
+        "summary": "Listar avaliacoes",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Avaliações"
+        ],
+        "summary": "Criar avaliacao",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvaliacaoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      }
+    },
+    "/avaliacoes/{id}": {
+      "get": {
+        "tags": [
+          "Avaliações"
+        ],
+        "summary": "Buscar avaliacao por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Avaliações"
+        ],
+        "summary": "Atualizar avaliacao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvaliacaoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Avaliações"
+        ],
+        "summary": "Excluir avaliacao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/bibliotecas": {
+      "get": {
+        "tags": [
+          "Bibliotecas"
+        ],
+        "summary": "Listar bibliotecas",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bibliotecas"
+        ],
+        "summary": "Criar biblioteca",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BibliotecaEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      }
+    },
+    "/bibliotecas/{id}": {
+      "get": {
+        "tags": [
+          "Bibliotecas"
+        ],
+        "summary": "Buscar biblioteca por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Bibliotecas"
+        ],
+        "summary": "Atualizar biblioteca",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BibliotecaEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          },
+          "409": {
+            "description": "Conflito"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Bibliotecas"
+        ],
+        "summary": "Excluir biblioteca",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/jogos/{id}/estatisticas": {
+      "get": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Calcular quantidade e média das avaliações",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/jogos/{id}/capa": {
+      "post": {
+        "tags": [
+          "Jogos"
+        ],
+        "summary": "Enviar ou substituir capa de jogo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "capa"
+                ],
+                "properties": {
+                  "capa": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Imagem JPG, PNG, WEBP ou GIF (até 5 MB)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Não encontrado"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Mensagem de funcionamento da API",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      }
+    },
+    "/db-test": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Testar conexão ao PostgreSQL",
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UsuarioEntrada": {
+        "type": "object",
+        "required": [
+          "nome",
+          "email",
+          "senha"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Carlos Souza",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "example": "carlos@exemplo.com"
+          },
+          "foto_perfil": {
+            "type": "string",
+            "example": "/uploads/avatar.png",
+            "nullable": true
+          },
+          "biografia": {
+            "type": "string",
+            "example": "Gosto de RPG.",
+            "nullable": true
+          },
+          "senha": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "example": "SenhaDeTeste123!"
+          }
+        }
+      },
+      "GeneroEntrada": {
+        "type": "object",
+        "required": [
+          "nome"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "RPG",
+            "minLength": 1
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Jogos de interpretação de personagens.",
+            "nullable": true
+          }
+        }
+      },
+      "JogoEntrada": {
+        "type": "object",
+        "required": [
+          "titulo",
+          "id_administrador"
+        ],
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "example": "Jogo Exemplo A",
+            "minLength": 1
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Descrição do jogo.",
+            "nullable": true
+          },
+          "data_lancamento": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-05-10",
+            "nullable": true
+          },
+          "desenvolvedora": {
+            "type": "string",
+            "example": "Estúdio X",
+            "nullable": true
+          },
+          "capa": {
+            "type": "string",
+            "example": "/uploads/capa.png",
+            "nullable": true
+          },
+          "id_administrador": {
+            "type": "integer",
+            "example": 1,
+            "minimum": 1
+          },
+          "generos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "description": "Identificador de gênero.",
+              "minimum": 1
+            },
+            "example": [
+              1,
+              2
+            ]
+          }
+        }
+      },
+      "AvaliacaoEntrada": {
+        "type": "object",
+        "required": [
+          "id_usuario",
+          "id_jogo",
+          "nota"
+        ],
+        "properties": {
+          "id_usuario": {
+            "type": "integer",
+            "example": 2,
+            "minimum": 1
+          },
+          "id_jogo": {
+            "type": "integer",
+            "example": 1,
+            "minimum": 1
+          },
+          "nota": {
+            "type": "integer",
+            "example": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comentario": {
+            "type": "string",
+            "example": "Muito bom!",
+            "nullable": true
+          }
+        }
+      },
+      "BibliotecaEntrada": {
+        "type": "object",
+        "required": [
+          "id_jogador"
+        ],
+        "properties": {
+          "id_jogador": {
+            "type": "integer",
+            "example": 2,
+            "minimum": 1
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Minha coleção",
+            "nullable": true
+          },
+          "privacidade": {
+            "type": "string",
+            "example": "PUBLICA",
+            "enum": [
+              "PUBLICA",
+              "PRIVADA"
+            ]
+          }
+        }
+      },
+      "UsuarioAtualizacao": {
+        "type": "object",
+        "required": [
+          "nome",
+          "email"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Carlos Souza",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "example": "carlos@exemplo.com"
+          },
+          "foto_perfil": {
+            "type": "string",
+            "example": "/uploads/avatar.png",
+            "nullable": true
+          },
+          "biografia": {
+            "type": "string",
+            "example": "Gosto de RPG.",
+            "nullable": true
+          },
+          "senha": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "example": "SenhaDeTeste123!"
+          }
+        }
+      },
+      "CredenciaisLogin": {
+        "type": "object",
+        "required": [
+          "email",
+          "senha"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "usuario@exemplo.com"
+          },
+          "senha": {
+            "type": "string",
+            "writeOnly": true,
+            "example": "Teste123456!"
+          }
+        }
+      },
+      "UsuarioAutenticado": {
+        "type": "object",
+        "required": [
+          "id_usuario",
+          "nome",
+          "email"
+        ],
+        "properties": {
+          "id_usuario": {
+            "type": "integer",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "Usuario Teste Bcrypt"
+          },
+          "email": {
+            "type": "string",
+            "example": "teste.bcrypt.1792457947@exemplo.com"
+          }
+        }
+      },
+      "RespostaLogin": {
+        "type": "object",
+        "required": [
+          "token",
+          "usuario"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOi..."
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/UsuarioAutenticado"
+          }
+        }
+      },
+      "IdentidadeAutenticada": {
+        "type": "object",
+        "required": [
+          "usuario"
+        ],
+        "properties": {
+          "usuario": {
+            "type": "object",
+            "required": [
+              "id_usuario",
+              "email"
+            ],
+            "properties": {
+              "id_usuario": {
+                "type": "integer",
+                "example": 1
+              },
+              "email": {
+                "type": "string",
+                "example": "teste.bcrypt.1792457947@exemplo.com"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
